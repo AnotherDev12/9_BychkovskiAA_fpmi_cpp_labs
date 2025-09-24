@@ -1,13 +1,12 @@
 #include <iostream>
-#include <cmath>
 
-bool Prime(int x) {
-    if (x <= 1) return false;
-    if (x == 2) return true;
-    if (x % 2 == 0) return false;
+bool Prime(int num) {
+    if (num <= 1) return false;
+    if (num == 2) return true;
+    if (num % 2 == 0) return false;
 
-    for (int i = 3; i * i <= x; i += 2) {
-        if (x % i == 0) {
+    for (int i = 3; i * i <= num; i += 2) {
+        if (num % i == 0) {
             return false;
         }
     }
@@ -25,7 +24,7 @@ int main() {
 
     std::cout << "Mersenne numbers <= " << n << ":" << std::endl;
 
-    int q = 0;
+    int quantity = 0;
     int p = 2;
 
     while (true) {
@@ -35,18 +34,18 @@ int main() {
 
         if (Prime(p) && Prime(mersenne)) {
             std::cout << mersenne << " ";
-            q++;
+            quantity++;
         }
         p++;
     }
 
     std::cout << std::endl;
 
-    if (q == 0) {
+    if (quantity == 0) {
         std::cout << "No numbers found :(" << std::endl;
     }
     else {
-        std::cout << "There are " << q << " numbers" << std::endl;
+        std::cout << "There are " << quantity << " numbers" << std::endl;
     }
     return 0;
 }
