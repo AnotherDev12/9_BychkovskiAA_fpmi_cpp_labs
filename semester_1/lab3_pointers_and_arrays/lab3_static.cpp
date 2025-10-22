@@ -102,7 +102,7 @@ void compressArray(double arr[], int n, double P) {
 }
 
 int main() {
-    std::setlocale(LC_ALL, "Russian");
+    setlocale(LC_ALL, "Russian");
 
     double arr[NMAX];
     int n, choice;

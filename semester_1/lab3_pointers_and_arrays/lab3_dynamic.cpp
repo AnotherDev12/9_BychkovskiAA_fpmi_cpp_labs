@@ -117,7 +117,7 @@ double* insertAfterLastNegative(double* arr, int& n, double P) {
 }
 
 int main() {
-    std::setlocale(LC_ALL, "Russian");
+    setlocale(LC_ALL, "Russian");
 
     int n, choice;
     std::cout << "¬ведите количество элементов массива: ";
