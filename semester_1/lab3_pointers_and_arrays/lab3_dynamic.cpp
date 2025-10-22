@@ -2,7 +2,7 @@
 #include <random>
 
 void printArray(const double* arr, int n) {
-    std::cout << "Массив: [";
+    std::cout << "Your array: [";
     for (int i = 0; i < n; i++) {
         std::cout << arr[i];
         if (i < n - 1) std::cout << ", ";
@@ -12,11 +12,11 @@ void printArray(const double* arr, int n) {
 
 
 void inputFromKeyboard(double* arr, int n) {
-    std::cout << "Введите " << n << " элементов массива:\n";
+    std::cout << "Enter " << n << " array elements:\n";
     for (int i = 0; i < n; i++) {
-        std::cout << "Элемент " << i + 1 << ": ";
+        std::cout << "Element " << i + 1 << ": ";
         if (!(std::cin >> arr[i])) {
-            std::cout << "Вводите только вещественные числа!";
+            std::cout << "Enter only real numbers!";
             std::exit(0);
         }
     }
@@ -24,9 +24,9 @@ void inputFromKeyboard(double* arr, int n) {
 
 void fillWithRandom(double* arr, int n) {
     double a, b;
-    std::cout << "Введите границы интервала [a, b]: ";
+    std::cout << "Enter interval boundaries [a, b]: ";
     if (!(std::cin >> a >> b)) {
-        std::cout << "Ошибка ввода!";
+        std::cout << "Input error!";
         std::exit(404);
     }
 
@@ -37,7 +37,7 @@ void fillWithRandom(double* arr, int n) {
     std::mt19937 gen(time(0));
     std::uniform_real_distribution<double> dist(a, b);
 
-    std::cout << "Заполнение массива случайными числами из интервала [" << a << ", " << b << "]:\n";
+    std::cout << "Filling the array with random numbers from thr interval [" << a << ", " << b << "]:\n";
     for (int i = 0; i < n; i++) {
         arr[i] = dist(gen);
     }
@@ -94,7 +94,7 @@ double* insertAfterLastNegative(double* arr, int& n, double P) {
     }
 
     if (lastNegativeIndex == -1) {
-        std::cout << "Отрицательных элементов не найдено. Вставка не выполнена.\n";
+        std::cout << "No negative numbers.\n";
         return arr;
     }
 
@@ -117,23 +117,22 @@ double* insertAfterLastNegative(double* arr, int& n, double P) {
 }
 
 int main() {
-    setlocale(LC_ALL, "Russian");
 
     int n, choice;
-    std::cout << "Введите количество элементов массива: ";
+    std::cout << "Enter the amount of the elements: ";
     if (!(std::cin >> n) || n < 1) {
-        std::cout << "Ошибка! Введите натуральное число элементов!\n";
+        std::cout << "Error! Enter a natural number\n";
         return 1;
     }
 
     double* arr = new double[n];
 
-    std::cout << "Выберите способ заполнения массива:\n";
-    std::cout << "1 - Ввод с клавиатуры\n";
-    std::cout << "2 - Заполнение случайными числами\n";
-    std::cout << "Ваш выбор: ";
+    std::cout << "Choose how your array will be filled:\n";
+    std::cout << "1 - Enter by hand\n";
+    std::cout << "2 - Filling by random numbers\n";
+    std::cout << "Your choice: ";
     if (!(std::cin >> choice)) {
-        std::cout << "Ошибка ввода!";
+        std::cout << "Input error!";
         delete[] arr;
         return 1;
     }
@@ -145,35 +144,35 @@ int main() {
         fillWithRandom(arr, n);
     }
     else {
-        std::cout << "Неверный выбор! Используется ввод с клавиатуры.\n";
+        std::cout << "Incorrect option! Using filling with elements entered by hand\n";
         inputFromKeyboard(arr, n);
     }
 
 
-    std::cout << "Исходный ";
+    std::cout << "Original ";
     printArray(arr, n);
 
     int maxAbsIndex = findMaxAbsIndex(arr, n);
     if (maxAbsIndex != -1) {
-        std::cout << "1. Номер максимального по модулю элемента: " << maxAbsIndex + 1 << std::endl;
-        std::cout << "   (элемент arr[" << maxAbsIndex << "] = " << arr[maxAbsIndex]
-            << ", модуль = " << std::abs(arr[maxAbsIndex]) << ")" << std::endl;
+        std::cout << "1. Number of the max element: " << maxAbsIndex + 1 << std::endl;
+        std::cout << "   (element arr[" << maxAbsIndex << "] = " << arr[maxAbsIndex]
+            << ", abs = " << std::abs(arr[maxAbsIndex]) << ")" << std::endl;
     }
 
     double sum = sumBeforeFirstPositive(arr, n);
-    std::cout << "2. Сумма элементов до первого положительного: " << sum << std::endl;
+    std::cout << "2. Sum of the elements before the first positive: " << sum << std::endl;
 
     double P;
-    std::cout << "\nВведите число P для вставки после последнего отрицательного: ";
+    std::cout << "\nEnter P: ";
     if (!(std::cin >> P)) {
-        std::cout << "Ошибка ввода!";
+        std::cout << "Input error!";
         delete[] arr;
         return 1;
     }
 
     arr = insertAfterLastNegative(arr, n, P);
 
-    std::cout << "3. Массив после вставки " << P << " после последнего отрицательного:\n";
+    std::cout << "3.Your array after insertig  " << P << " after the last negative:\n";
     printArray(arr, n);
 
     delete[] arr;

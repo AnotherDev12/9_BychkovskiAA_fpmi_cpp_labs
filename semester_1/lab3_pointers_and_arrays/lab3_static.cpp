@@ -4,11 +4,11 @@
 const int NMAX = 1000;
 
 void inputFromKeyboard(double arr[], int n) {
-    std::cout << "Введите " << n << " элементов массива:\n";
+    std::cout << "Enter " << n << " array elements:\n";
     for (int i = 0; i < n; i++) {
-        std::cout << "Элемент " << i + 1 << ": ";
+        std::cout << "Element " << i + 1 << ": ";
         if (!(std::cin >> arr[i])) {
-            std::cout << "Вводите только вещественные числа!";
+            std::cout << "Enter only real numbers!";
             std::exit(0);
         }
     }
@@ -16,7 +16,7 @@ void inputFromKeyboard(double arr[], int n) {
 
 void fillWithRandom(double arr[], int n) {
     double a, b;
-    std::cout << "Введите границы интервала [a, b]: ";
+    std::cout << "Enter interval boundaries [a, b]: ";
     if (!(std::cin >> a >> b) && a < 0 && b < 0) {
         std::exit(404);
     }
@@ -29,14 +29,14 @@ void fillWithRandom(double arr[], int n) {
     std::uniform_real_distribution<double> dist(a, b);
     double x = dist(gen);
 
-    std::cout << "Заполнение массива случайными числами из интервала [" << a << ", " << b << "]:\n";
+    std::cout << "Filling the array with random [" << a << ", " << b << "]:\n";
     for (int i = 0; i < n; i++) {
         arr[i] = dist(gen);
     }
 }
 
 void printArray(const double arr[], int n) {
-    std::cout << "Массив: [";
+    std::cout << "Your array: [";
     for (int i = 0; i < n; i++) {
         std::cout << arr[i];
         if (i < n - 1) std::cout << ", ";
@@ -102,24 +102,23 @@ void compressArray(double arr[], int n, double P) {
 }
 
 int main() {
-    setlocale(LC_ALL, "Russian");
 
     double arr[NMAX];
     int n, choice;
 
-    std::cout << "Введите количество элементов массива (1 <= n <= " << NMAX << "): ";
+    std::cout << "Enter the number of elements (1 <= n <= " << NMAX << "): ";
     if (!(std::cin >> n) || n < 1 || n > NMAX) {
-        std::cout << "Ошибка! Введите натуральное число элементов от 1 до " << NMAX << "!\n";
+        std::cout << "Error! Enter a natural number of elements from 1 to " << NMAX << "!\n";
         std::exit(0);
     }
 
 
-    std::cout << "Выберите способ заполнения массива:\n";
-    std::cout << "1 - Ввод с клавиатуры\n";
-    std::cout << "2 - Заполнение случайными числами\n";
-    std::cout << "Ваш выбор: ";
+    std::cout << "Choose how your array will be filled:\n";
+    std::cout << "1 - Enter by hand\n";
+    std::cout << "2 - Filling by random numbers\n";
+    std::cout << "Your choice: ";
     if (!(std::cin >> choice)) {
-        std::cout << "Вашей задачей было ввести 1 или 2";
+        std::cout << "Your task was to enter 1 or 2";
         std::exit(0);
     }
 
@@ -130,27 +129,27 @@ int main() {
         fillWithRandom(arr, n);
     }
     else {
-        std::cout << "Неверный выбор! Используется ввод с клавиатуры.\n";
+        std::cout << "Incorrect option! Using filling with elements entered by hand\n";
         inputFromKeyboard(arr, n);
     }
 
-    std::cout << "Исходный ";
+    std::cout << "Original ";
     printArray(arr, n);
 
 
     int minAbsIndex = findMinAbsIndex(arr, n);
     if (minAbsIndex != -1) {
-        std::cout << "1. Номер минимального по модулю элемента: " << minAbsIndex + 1 << std::endl;
-        std::cout << "(элемент arr[" << minAbsIndex << "] = " << arr[minAbsIndex] << ")" << std::endl;
+        std::cout << "1. Number of the min element: " << minAbsIndex + 1 << std::endl;
+        std::cout << "(element arr[" << minAbsIndex << "] = " << arr[minAbsIndex] << ")" << std::endl;
     }
 
     double sum = sumAfterFirstNegative(arr, n);
-    std::cout << "2. Сумма элементов после первого отрицательного: " << sum << std::endl;
+    std::cout << "2. Sum of the elements after the first negative: " << sum << std::endl;
 
     double P;
-    std::cout << "\nВведите число P для удаления из массива: ";
+    std::cout << "\nEnter P for deleting: ";
     if (!(std::cin >> P)) {
-        std::cout << "Вводите только вещественные числа!";
+        std::cout << "Enter only real numbers!";
         std::exit(0);
     }
 
@@ -160,7 +159,7 @@ int main() {
     }
 
     compressArray(arrCopy, n, P);
-    std::cout << "3. Массив после удаления элементов, равных " << P << ":\n";
+    std::cout << "3. Your array after deleting elements equal to " << P << ":\n";
     printArray(arrCopy, n);
 
 
