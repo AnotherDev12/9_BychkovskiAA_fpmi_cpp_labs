@@ -15,21 +15,21 @@ void inputFromKeyboard(double arr[], int n) {
 }
 
 void fillWithRandom(double arr[], int n) {
-    double a, b;
-    std::cout << "Enter interval boundaries [a, b]: ";
-    if (!(std::cin >> a >> b) && a < 0 && b < 0) {
+    double lower, upper;
+    std::cout << "Enter interval boundaries [lower, upper]: ";
+    if (!(std::cin >> lower >> upper) && lower < 0 && upper < 0) {
         std::exit(404);
     }
 
-    if (a > b) {
-        std::swap(a, b);
+    if (lower > upper) {
+        std::swap(lower, upper);
     }
 
     std::mt19937 gen(time(0));
-    std::uniform_real_distribution<double> dist(a, b);
+    std::uniform_real_distribution<double> dist(lower, upper);
     double x = dist(gen);
 
-    std::cout << "Filling the array with random [" << a << ", " << b << "]:\n";
+    std::cout << "Filling the array with random [" << lower << ", " << upper << "]:\n";
     for (int i = 0; i < n; i++) {
         arr[i] = dist(gen);
     }
