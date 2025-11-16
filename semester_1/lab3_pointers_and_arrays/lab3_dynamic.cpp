@@ -5,7 +5,9 @@ void printArray(const double* arr, int n) {
     std::cout << "Your array: [";
     for (int i = 0; i < n; i++) {
         std::cout << arr[i];
-        if (i < n - 1) std::cout << ", ";
+        if (i < n - 1) {
+            std::cout << ", ";
+        }
     }
     std::cout << "]\n";
 }
@@ -16,8 +18,7 @@ void inputFromKeyboard(double* arr, int n) {
     for (int i = 0; i < n; i++) {
         std::cout << "Element " << i + 1 << ": ";
         if (!(std::cin >> arr[i])) {
-            std::cout << "Enter only real numbers!";
-            std::exit(0);
+            throw "Enter only real numbers";
         }
     }
 }
@@ -26,10 +27,9 @@ void fillWithRandom(double* arr, int n) {
     double lower, upper;
     std::cout << "Enter interval boundaries [lower, upper]: ";
     if (!(std::cin >> lower >> upper)) {
-        std::cout << "Input error!";
-        std::exit(404);
+        throw "Input error!";
     }
- 
+
     if (lower > upper) {
         std::swap(lower, upper);
     }
@@ -119,63 +119,68 @@ double* insertAfterLastNegative(double* arr, int& n, double P) {
 int main() {
 
     int n, choice;
-    std::cout << "Enter the amount of the elements: ";
-    if (!(std::cin >> n) || n < 1) {
-        std::cout << "Error! Enter a natural number\n";
-        return 1;
-    }
+    try {
+        std::cout << "Enter the amount of the elements: ";
+        if (!(std::cin >> n)) {
+            throw "Enter the amount of elements!";
+        }
 
-    double* arr = new double[n];
+        if (n < 1) {
+            throw "Amount of elements can not be less than 1.";
+        }
 
-    std::cout << "Choose how your array will be filled:\n";
-    std::cout << "1 - Enter by hand\n";
-    std::cout << "2 - Filling by random numbers\n";
-    std::cout << "Your choice: ";
-    if (!(std::cin >> choice)) {
-        std::cout << "Input error!";
+
+        double* arr = new double[n];
+
+        std::cout << "Choose how your array will be filled:\n";
+        std::cout << "1 - Enter by hand\n";
+        std::cout << "2 - Filling by random numbers\n";
+        std::cout << "Your choice: ";
+        if (!(std::cin >> choice)) {
+            throw "Enter a number.";
+        }
+
+        if (choice == 1) {
+            inputFromKeyboard(arr, n);
+        }
+        else {
+            if (choice == 2) {
+                fillWithRandom(arr, n);
+            }
+
+            else {
+                throw "Your task was to enter 1 or 2!!!";
+            }
+        }
+
+        std::cout << "Original ";
+        printArray(arr, n);
+
+        int maxAbsIndex = findMaxAbsIndex(arr, n);
+        if (maxAbsIndex != -1) {
+            std::cout << "1. Number of the max element: " << maxAbsIndex + 1 << std::endl;
+            std::cout << "   (element arr[" << maxAbsIndex << "] = " << arr[maxAbsIndex]
+                << ", abs = " << std::abs(arr[maxAbsIndex]) << ")" << std::endl;
+        }
+
+        double sum = sumBeforeFirstPositive(arr, n);
+        std::cout << "2. Sum of the elements before the first positive: " << sum << std::endl;
+
+        double P;
+        std::cout << "\nEnter P: ";
+        if (!(std::cin >> P)) {
+            throw "Enter a number for compression!!!";
+        }
+
+        arr = insertAfterLastNegative(arr, n, P);
+
+        std::cout << "3.Your array after insertig  " << P << " after the last negative:\n";
+        printArray(arr, n);
+
         delete[] arr;
-        return 1;
     }
-
-    if (choice == 1) {
-        inputFromKeyboard(arr, n);
+    catch (const char* msg) {
+        std::cerr << msg << std::endl;
     }
-    else if (choice == 2) {
-        fillWithRandom(arr, n);
-    }
-    else {
-        std::cout << "Incorrect option! Using filling with elements entered by hand\n";
-        inputFromKeyboard(arr, n);
-    }
-
-
-    std::cout << "Original ";
-    printArray(arr, n);
-
-    int maxAbsIndex = findMaxAbsIndex(arr, n);
-    if (maxAbsIndex != -1) {
-        std::cout << "1. Number of the max element: " << maxAbsIndex + 1 << std::endl;
-        std::cout << "   (element arr[" << maxAbsIndex << "] = " << arr[maxAbsIndex]
-            << ", abs = " << std::abs(arr[maxAbsIndex]) << ")" << std::endl;
-    }
-
-    double sum = sumBeforeFirstPositive(arr, n);
-    std::cout << "2. Sum of the elements before the first positive: " << sum << std::endl;
-
-    double P;
-    std::cout << "\nEnter P: ";
-    if (!(std::cin >> P)) {
-        std::cout << "Input error!";
-        delete[] arr;
-        return 1;
-    }
-
-    arr = insertAfterLastNegative(arr, n, P);
-
-    std::cout << "3.Your array after insertig  " << P << " after the last negative:\n";
-    printArray(arr, n);
-
-    delete[] arr;
-
     return 0;
 }

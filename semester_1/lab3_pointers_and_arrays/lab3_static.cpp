@@ -1,20 +1,20 @@
 #include <iostream>
 #include <random>
+#include <math.h>
 
 const int NMAX = 1000;
 
-void inputFromKeyboard(double arr[], int n) {
+void inputFromKeyboard(double* arr, int n) {
     std::cout << "Enter " << n << " array elements:\n";
     for (int i = 0; i < n; i++) {
         std::cout << "Element " << i + 1 << ": ";
         if (!(std::cin >> arr[i])) {
-            std::cout << "Enter only real numbers!";
-            std::exit(0);
+            throw "Enter only real numbers!";
         }
     }
 }
 
-void fillWithRandom(double arr[], int n) {
+void fillWithRandom(double* arr, int n) {
     double lower, upper;
     std::cout << "Enter interval boundaries [lower, upper]: ";
     if (!(std::cin >> lower >> upper) && lower < 0 && upper < 0) {
@@ -35,7 +35,7 @@ void fillWithRandom(double arr[], int n) {
     }
 }
 
-void printArray(const double arr[], int n) {
+void printArray(const double* arr, int n) {
     std::cout << "Your array: [";
     for (int i = 0; i < n; i++) {
         std::cout << arr[i];
@@ -44,7 +44,7 @@ void printArray(const double arr[], int n) {
     std::cout << "]\n";
 }
 
-int findMinAbsIndex(const double arr[], int n) {
+int findMinAbsIndex(const double* arr, int n) {
     if (n == 0) return -1;
 
     double minAbs = std::abs(arr[0]);
@@ -63,8 +63,9 @@ int findMinAbsIndex(const double arr[], int n) {
     return maxIndex;
 }
 
-double sumAfterFirstNegative(const double arr[], int n) {
+double sumAfterFirstNegative(const double* arr, int n) {
     int firstNegativeIndex = -1;
+    double sum = 0.0;
 
     for (int i = 0; i < n; i++) {
         if (arr[i] < 0) {
@@ -73,11 +74,13 @@ double sumAfterFirstNegative(const double arr[], int n) {
         }
     }
 
-    if (firstNegativeIndex == -1 || firstNegativeIndex == n - 1) {
-        return 0;
+    if (firstNegativeIndex == -1) {
+        throw "No negative elements\n";
+    }
+    if (firstNegativeIndex == n - 1) {
+        throw "No elements after first negative\n";
     }
 
-    double sum = 0;
     for (int i = firstNegativeIndex + 1; i < n; i++) {
         sum += arr[i];
     }
@@ -85,83 +88,97 @@ double sumAfterFirstNegative(const double arr[], int n) {
     return sum;
 }
 
-void compressArray(double arr[], int n, double P) {
-    int writeIndex = 0;
 
+void CompressArray(double* arr, int n, double P) {
+    int writeIndex = 0;
+    double epsilon = 1e-12;
 
     for (int i = 0; i < n; i++) {
-        if (arr[i] != P) {
+        if (fabs(arr[i] - P) >= epsilon) {
             arr[writeIndex] = arr[i];
             writeIndex++;
         }
     }
 
     for (int i = writeIndex; i < n; i++) {
-        arr[i] = 0;
+        arr[i] = 0.0;
     }
 }
 
 int main() {
+  double arr[NMAX];
+  int n, choice;
 
-    double arr[NMAX];
-    int n, choice;
+   try {
+        std::cout << "Enter the number of elements (1 <= n <= " << NMAX << "): ";
 
-    std::cout << "Enter the number of elements (1 <= n <= " << NMAX << "): ";
-    if (!(std::cin >> n) || n < 1 || n > NMAX) {
-        std::cout << "Error! Enter a natural number of elements from 1 to " << NMAX << "!\n";
-        std::exit(0);
+        if (!(std::cin >> n)) {
+            throw "Error! Enter an integer number.";
+        }
+
+        if (n < 1) {
+            throw "Error! Number of array elements must be more than 0";
+        }
+
+        if (n > NMAX) {
+            throw "Error! Number of array elements can not be more than the constant value!";
+        }
+
+        std::cout << "Choose how your array will be filled:\n";
+        std::cout << "1 - Enter by hand\n";
+        std::cout << "2 - Filling by random numbers\n";
+        std::cout << "Your choice: ";
+        if (!(std::cin >> choice)) {
+            throw "Enter a natural number!";
+        }
+
+        if (choice == 1) {
+            inputFromKeyboard(arr, n);
+        }
+        else if (choice == 2) {
+            fillWithRandom(arr, n);
+        }
+        else {
+            throw "Incorrect option! Choose 1 or 2!";
+        }
+
+        std::cout << "Original: ";
+        printArray(arr, n);
+
+
+        int minAbsIndex = findMinAbsIndex(arr, n);
+        if (minAbsIndex != -1) {
+            std::cout << "1. Number of the min element: " << minAbsIndex + 1 << std::endl;
+            std::cout << "(element arr[" << minAbsIndex << "] = " << arr[minAbsIndex] << ")" << std::endl;
+        }
+        try {
+            std::cout << "2. Sum of the elements after the first negative: " << sumAfterFirstNegative(arr, n) << std::endl;
+        }
+        catch (const char* msg) {
+            std::cerr << msg << "\n";
+        }
+
+        double P;
+        std::cout << "\nEnter P for deleting: ";
+        if (!(std::cin >> P)) {
+            throw "Enter a real number for compression!";
+        }
+
+        double arrCopy[NMAX];
+        for (int i = 0; i < n; i++) {
+            arrCopy[i] = arr[i];
+        }
+        try {
+            CompressArray(arrCopy, n, P);
+            std::cout << "3. Your array after deleting elements equal to " << P << ":\n";
+            printArray(arrCopy, n);
+        }
+        catch (const char* msg) {
+            std::cerr << msg << "\n";
+        }
     }
-
-
-    std::cout << "Choose how your array will be filled:\n";
-    std::cout << "1 - Enter by hand\n";
-    std::cout << "2 - Filling by random numbers\n";
-    std::cout << "Your choice: ";
-    if (!(std::cin >> choice)) {
-        std::cout << "Your task was to enter 1 or 2";
-        std::exit(0);
+    catch (const char* msg) {
+        std::cerr << msg << "\n";
     }
-
-    if (choice == 1) {
-        inputFromKeyboard(arr, n);
-    }
-    else if (choice == 2) {
-        fillWithRandom(arr, n);
-    }
-    else {
-        std::cout << "Incorrect option! Using filling with elements entered by hand\n";
-        inputFromKeyboard(arr, n);
-    }
-
-    std::cout << "Original ";
-    printArray(arr, n);
-
-
-    int minAbsIndex = findMinAbsIndex(arr, n);
-    if (minAbsIndex != -1) {
-        std::cout << "1. Number of the min element: " << minAbsIndex + 1 << std::endl;
-        std::cout << "(element arr[" << minAbsIndex << "] = " << arr[minAbsIndex] << ")" << std::endl;
-    }
-
-    double sum = sumAfterFirstNegative(arr, n);
-    std::cout << "2. Sum of the elements after the first negative: " << sum << std::endl;
-
-    double P;
-    std::cout << "\nEnter P for deleting: ";
-    if (!(std::cin >> P)) {
-        std::cout << "Enter only real numbers!";
-        std::exit(0);
-    }
-
-    double arrCopy[NMAX];
-    for (int i = 0; i < n; i++) {
-        arrCopy[i] = arr[i];
-    }
-
-    compressArray(arrCopy, n, P);
-    std::cout << "3. Your array after deleting elements equal to " << P << ":\n";
-    printArray(arrCopy, n);
-
-
     return 0;
 }
