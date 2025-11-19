@@ -17,8 +17,8 @@ void inputFromKeyboard(double* arr, int n) {
 void fillWithRandom(double* arr, int n) {
     double lower, upper;
     std::cout << "Enter interval boundaries [lower, upper]: ";
-    if (!(std::cin >> lower >> upper) && lower < 0 && upper < 0) {
-        std::exit(404);
+    if (!(std::cin >> lower >> upper)) {
+        throw "Error! Enter real numbers for boundaries.";
     }
 
     if (lower > upper) {
