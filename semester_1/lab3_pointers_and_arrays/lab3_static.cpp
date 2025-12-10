@@ -1,12 +1,13 @@
 #include <iostream>
 #include <random>
-#include <math.h>
+#include <cmath>
+#include <ctime>
 
-const int NMAX = 1000;
+const int maxSize = 1000;
 
 void inputFromKeyboard(double* arr, int n) {
     std::cout << "Enter " << n << " array elements:\n";
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
         std::cout << "Element " << i + 1 << ": ";
         if (!(std::cin >> arr[i])) {
             throw "Enter only real numbers!";
@@ -14,8 +15,7 @@ void inputFromKeyboard(double* arr, int n) {
     }
 }
 
-void fillWithRandom(double* arr, int n) {
-    double lower, upper;
+void InputBordersForRandom(double& lower, double& upper) {
     std::cout << "Enter interval boundaries [lower, upper]: ";
     if (!(std::cin >> lower >> upper)) {
         throw "Error! Enter real numbers for boundaries.";
@@ -24,20 +24,22 @@ void fillWithRandom(double* arr, int n) {
     if (lower > upper) {
         std::swap(lower, upper);
     }
+}
 
-    std::mt19937 gen(time(0));
+void fillWithRandom(double* arr, int n, std::mt19937& gen) {
+    double lower, upper;
+    InputBordersForRandom(lower, upper);
     std::uniform_real_distribution<double> dist(lower, upper);
-    double x = dist(gen);
 
     std::cout << "Filling the array with random [" << lower << ", " << upper << "]:\n";
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
         arr[i] = dist(gen);
     }
 }
 
 void printArray(const double* arr, int n) {
     std::cout << "Your array: [";
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
         std::cout << arr[i];
         if (i < n - 1) std::cout << ", ";
     }
@@ -45,12 +47,11 @@ void printArray(const double* arr, int n) {
 }
 
 int findMinAbsIndex(const double* arr, int n) {
-    if (n == 0) return -1;
 
     double minAbs = std::abs(arr[0]);
     int maxIndex = 0;
 
-    for (int i = 1; i < n; i++) {
+    for (int i = 1; i < n; ++i) {
         double currentAbs = std::abs(arr[i]);
         if (currentAbs < minAbs || (currentAbs == minAbs && i > maxIndex)) {
             if (currentAbs < minAbs) {
@@ -67,7 +68,7 @@ double sumAfterFirstNegative(const double* arr, int n) {
     int firstNegativeIndex = -1;
     double sum = 0.0;
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
         if (arr[i] < 0) {
             firstNegativeIndex = i;
             break;
@@ -81,7 +82,7 @@ double sumAfterFirstNegative(const double* arr, int n) {
         throw "No elements after first negative\n";
     }
 
-    for (int i = firstNegativeIndex + 1; i < n; i++) {
+    for (int i = firstNegativeIndex + 1; i < n; ++i) {
         sum += arr[i];
     }
 
@@ -91,26 +92,28 @@ double sumAfterFirstNegative(const double* arr, int n) {
 
 void CompressArray(double* arr, int n, double P) {
     int writeIndex = 0;
-    double epsilon = 1e-12;
+    double epsilon = 1e-4;
 
-    for (int i = 0; i < n; i++) {
+
+    for (int i = 0; i < n; ++i) {
         if (fabs(arr[i] - P) >= epsilon) {
             arr[writeIndex] = arr[i];
             writeIndex++;
         }
     }
 
-    for (int i = writeIndex; i < n; i++) {
+    for (int i = writeIndex; i < n; ++i) {
         arr[i] = 0.0;
     }
 }
 
 int main() {
-  double arr[NMAX];
-  int n, choice;
+    double arr[maxSize];
+    int n, choice;
+    std::mt19937 gen(static_cast<double>(time(0)));
 
-   try {
-        std::cout << "Enter the number of elements (1 <= n <= " << NMAX << "): ";
+    try {
+        std::cout << "Enter the number of elements (1 <= n <= " << maxSize << "): ";
 
         if (!(std::cin >> n)) {
             throw "Error! Enter an integer number.";
@@ -120,7 +123,7 @@ int main() {
             throw "Error! Number of array elements must be more than 0";
         }
 
-        if (n > NMAX) {
+        if (n > maxSize) {
             throw "Error! Number of array elements can not be more than the constant value!";
         }
 
@@ -136,7 +139,7 @@ int main() {
             inputFromKeyboard(arr, n);
         }
         else if (choice == 2) {
-            fillWithRandom(arr, n);
+            fillWithRandom(arr, n, gen);
         }
         else {
             throw "Incorrect option! Choose 1 or 2!";
@@ -164,8 +167,8 @@ int main() {
             throw "Enter a real number for compression!";
         }
 
-        double arrCopy[NMAX];
-        for (int i = 0; i < n; i++) {
+        double arrCopy[maxSize]{};
+        for (int i = 0; i < n; ++i) {
             arrCopy[i] = arr[i];
         }
         try {
