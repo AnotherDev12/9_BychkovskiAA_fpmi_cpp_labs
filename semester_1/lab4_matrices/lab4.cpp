@@ -3,12 +3,13 @@
 #include <iomanip>
 
 void input_sides(int& rows, int& cols) {
+	std::cout << "Please, enter the matrix measurments: ";
 	if (!(std::cin >> rows)) {
 		throw "Amount of rows must be a number.";
 	}
 
 	if (rows < 1) {
-		throw "Amount of rows must be a number more than 1.";
+		throw "Amount of rows must be at least 1.";
 	}
 
 	if (!(std::cin >> cols)) {
@@ -16,18 +17,18 @@ void input_sides(int& rows, int& cols) {
 	}
 
 	if (cols < 1) {
-		throw "Amount of columns must be a number more than 1.";
+		throw "Amount of columns must be at least 1.";
 	}
 }
 
-void allocate_matrix(int** matrix, int rows, int columns) {
+void allocate_matrix(int**& matrix, int rows, int columns) {
 	matrix = new int* [rows];
 	for (int i = 0; i < rows; ++i) {
 		matrix[i] = new int[columns];
 	}
 }
 
-void delete_the_matrix(int** matrix, int rows, int columns) {
+void delete_the_matrix(int** matrix, int rows) {
 	for (int i = 0; i < rows; ++i) {
 		delete[] matrix[i];
 	}
@@ -65,10 +66,7 @@ int get_variant() {
 	int variant;
 	std::cout << "1 - fill with random numbers\n";
 	std::cout << "2 - fill manually\n";
-	if (!(std::cin >> variant)) {
-		std::cout << "Next time enter 1 or 2 >:(";
-		std::exit(1);
-	}
+	std::cin >> variant;
 	return variant;
 }
 
@@ -76,7 +74,7 @@ void manual_input(int** matr, int rows, int columns) {
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < columns; ++j) {
 			if (!(std::cin >> matr[i][j])) {
-				throw "Next time enter an integer element."
+				throw "Next time enter an integer element.";
 			}
 		}
 	}
@@ -95,11 +93,10 @@ void choosing_variants_of_input(int** matrix, int rows, int columns) {
 	int variant = get_variant();
 
 	if (variant == 1) {
+		std::mt19937 gen(static_cast<int>(time(0)));
+	    fill_the_matrix_with_random_numbers(matrix, rows, columns, gen);
 
-		std::mt19937 gen(static_cast<int>(time(0));
-		fill_the_matrix_with_random_numbers(matrix, rows, columns, &gen);
-
-		std::cout << "\nThis is your random numbers:\n";
+		std::cout << "\nThis is your matrix:\n";
 		print_matrix(matrix, rows, columns);
 	}
 	else if (variant == 2) {
@@ -109,7 +106,7 @@ void choosing_variants_of_input(int** matrix, int rows, int columns) {
 
 	}
 	else {
-		throw "I asked to you enter 1 or 2 :(";
+		throw "I asked to you enter 1 or 2 :(\n";
 	}
 }
 
@@ -130,8 +127,6 @@ int sum_without_zeros(int** matrix, int rows, int columns) {
 			}
 		}
 	}
-
-
 	return sum;
 }
 
@@ -149,17 +144,15 @@ int main() {
 	int** matrix;
 	int rows;
 	int columns;
-	std::cout << "Please, enter the matrix measurments: ";
 	try {
-		input_sides(rows, columns)
+		input_sides(rows, columns);
 		allocate_matrix(matrix, rows, columns);
 		choosing_variants_of_input(matrix, rows, columns);
-		sum_without_zeros(matrix, rows, columns);
-		std::cout << "Sum of the elements in rows without 0 = " << sum_without_zeros(matrix, rows, columns);
-		std::cout << std::endl;
+		std::cout << "\nSum of the elements in rows without 0 = " << sum_without_zeros(matrix, rows, columns) << "\n\n";
 		swap_columns(matrix, rows, columns);
+		std::cout << "This is your matrix after swapping the columns:\n";
 		print_matrix(matrix, rows, columns);
-		delete_the_matrix(matrix, rows, columns);
+		delete_the_matrix(matrix, rows);
 	}
 	catch (const char* msg) {
 		std::cerr << "Error! " << msg;
